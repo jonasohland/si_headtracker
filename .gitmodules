@@ -1,0 +1,6 @@
+[submodule "si_headtracker_gyro"]
+	path = si_headtracker_gyro
+	url = https://github.com/jonasohland/si_headtracker_gyro
+[submodule "si_headtracker_net"]
+	path = si_headtracker_net
+	url = https://github.com/jonasohland/si_headtracker_net
