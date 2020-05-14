@@ -41,15 +41,15 @@ typedef enum si_gy_values {
 } si_gy_values_t;
 
 typedef enum si_gy_message_types {
-    SI_GY_MSG_TY_MIN = 1,
+    SI_GY_MSG_TY_MIN = 10,
     SI_GY_GET,
     SI_GY_SET,
     SI_GY_NOTIFY,
     SI_GY_MSG_TY_MAX
 } si_gy_message_types_t;
 
-typedef const void* (*si_serial_get_handler_t)(void*, si_gy_values_t, const void*);
-typedef void (*si_serial_set_handler_t)(void*, si_gy_values_t, const void*);
+typedef const uint8_t* (*si_serial_get_handler_t)(void*, si_gy_values_t, const uint8_t*);
+typedef void (*si_serial_set_handler_t)(void*, si_gy_values_t, const uint8_t*);
 typedef void (*si_serial_notify_handler_t)(void*, si_gy_values_t);
 
 typedef struct si_serial_handlers {
@@ -60,6 +60,8 @@ typedef struct si_serial_handlers {
 
 typedef struct si_serial {
 
+    uint8_t buffer[32];
+
     HardwareSerial* uart;
 
     si_serial_get_handler_t get;
@@ -67,12 +69,11 @@ typedef struct si_serial {
     si_serial_notify_handler_t notify;
     void* userdata;
 
+    si_gy_message_types_t msg_ty;
+
     si_gy_parser_state_t state;
     si_gy_values_t cval;
-    si_gy_message_types_t msg_ty;
     int scount;
-
-    uint8_t buffer[32];
 
 } si_serial_t;
 
@@ -98,9 +99,9 @@ void si_serial_call_handler(si_serial_t* serial);
 
 void si_serial_read_value(si_serial_t* serial, char dat);
 
-void si_serial_write_message(si_serial_t* serial, si_gy_message_types_t ty, si_gy_values_t val, const void* data);
+void si_serial_write_message(si_serial_t* serial, si_gy_message_types_t ty, si_gy_values_t val, const uint8_t* data);
 
-void si_serial_set_value(si_serial_t* serial, si_gy_values_t value, const void* data);
+void si_serial_set_value(si_serial_t* serial, si_gy_values_t value, const uint8_t* data);
 void si_serial_req_value(si_serial_t* serial, si_gy_values_t val);
 void si_serial_notify(si_serial_t* serial, si_gy_values_t value);
 

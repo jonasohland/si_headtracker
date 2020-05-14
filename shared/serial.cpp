@@ -53,8 +53,8 @@ void si_serial_read_next_byte(si_serial_t* serial, char dat)
         case SI_PARSER_FIND_SYNC: si_serial_find_sync(serial, dat); break;
         case SI_PARSER_SYNCING: si_serial_sync(serial, dat); break;
         case SI_PARSER_READ_VALUE_TYPE: si_serial_read_valtype(serial, dat); break;
-        case SI_PARSER_MESSAGE_TYPE: si_serial_read_msg_ty(serial, dat);
-        case SI_PARSER_READ_VALUE: si_serial_read_value(serial, dat);
+        case SI_PARSER_MESSAGE_TYPE: si_serial_read_msg_ty(serial, dat); break;
+        case SI_PARSER_READ_VALUE: si_serial_read_value(serial, dat); break;
     }
     // clang-format on
 }
@@ -70,7 +70,6 @@ void si_serial_find_sync(si_serial_t* serial, char dat)
 void si_serial_sync(si_serial_t* serial, char dat)
 {
     if (serial->scount < 3) {
-
         if (dat == SI_SERIAL_SYNC_CODE)
             serial->scount = serial->scount + 1;
         else
@@ -98,6 +97,7 @@ void si_serial_read_valtype(si_serial_t* serial, char dat)
 void si_serial_read_msg_ty(si_serial_t* serial, char dat)
 {
     if (dat > SI_GY_MSG_TY_MIN && dat < SI_GY_MSG_TY_MAX) {
+
         serial->msg_ty = (si_gy_message_types_t) dat;
         serial->state  = SI_PARSER_READ_VALUE;
 
@@ -128,10 +128,16 @@ void si_serial_call_handler(si_serial_t* serial)
 
 void si_serial_read_value(si_serial_t* serial, char dat)
 {
-    if (serial->scount < si_serial_msg_lengths[serial->cval - 1] - 1)
+    if (serial->scount < (si_serial_msg_lengths[serial->cval] - 1))
         serial->buffer[serial->scount++] = dat;
     else {
         serial->buffer[serial->scount] = dat;
+
+        if(dat == 0xCC)
+            digitalWrite(LED_BUILTIN, HIGH);
+        else
+            digitalWrite(LED_BUILTIN, LOW);
+
         si_serial_call_handler(serial);
         si_serial_reset(serial);
     }
@@ -140,11 +146,12 @@ void si_serial_read_value(si_serial_t* serial, char dat)
 void si_serial_write_message(si_serial_t* serial,
                              si_gy_message_types_t ty,
                              si_gy_values_t val,
-                             const void* data)
+                             const uint8_t* data)
 {
     size_t len = si_serial_msg_lengths[val];
 
-    for (int i = 0; i < 4; ++i) Serial.write(SI_SERIAL_SYNC_CODE);
+    for (int i = 0; i < 4; ++i) 
+        Serial.write(SI_SERIAL_SYNC_CODE);
 
     Serial.write(val);
     Serial.write(ty);
@@ -153,7 +160,7 @@ void si_serial_write_message(si_serial_t* serial,
 
 void si_serial_set_value(si_serial_t* serial,
                          si_gy_values_t value,
-                         const void* data)
+                         const uint8_t* data)
 {
     si_serial_write_message(serial, SI_GY_SET, value, data);
 }
