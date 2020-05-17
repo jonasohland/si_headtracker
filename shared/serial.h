@@ -5,10 +5,12 @@
 // gyro flags
 #define SI_FLAG_ST_GY_CONNECTED      _BV(0)
 #define SI_FLAG_ST_GY_READY          _BV(1)
-#define SI_FLAG_ST_RESET_ORIENTATION _BV(2)
+// #define SI_FLAG_ST_RESET_ORIENTATION _BV(2)
 #define SI_FLAG_ST_INVERT_X          _BV(3)
 #define SI_FLAG_ST_INVERT_Y          _BV(4)
 #define SI_FLAG_ST_INVERT_Z          _BV(5)
+
+#define SI_FLAG_INVERT_BITMASK       (SI_FLAG_ST_INVERT_X | SI_FLAG_ST_INVERT_Y | SI_FLAG_ST_INVERT_Z)
 
 // device flags
 #define SI_FLAG_SEND_DATA         _BV(0)
@@ -16,6 +18,7 @@
 #define SI_FLAG_APPLY_OFFSETS     _BV(2)
 
 #define SI_SERIAL_SYNC_CODE 0x23
+#define SI_SERIAL_BAUD_RATE 115200
 
 extern uint8_t si_serial_msg_lengths[];
 
@@ -37,6 +40,9 @@ typedef enum si_gy_values {
     SI_GY_FOUND,
     SI_GY_VERSION,
     SI_GY_HELLO,
+    SI_GY_RESET,
+    SI_GY_INV,
+    SI_GY_RESET_ORIENTATION,
     SI_GY_VALUES_MAX
 } si_gy_values_t;
 
@@ -45,6 +51,8 @@ typedef enum si_gy_message_types {
     SI_GY_GET,
     SI_GY_SET,
     SI_GY_NOTIFY,
+    SI_GY_RESP,
+    SI_GY_ACK,
     SI_GY_MSG_TY_MAX
 } si_gy_message_types_t;
 

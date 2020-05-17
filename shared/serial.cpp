@@ -11,6 +11,9 @@ uint8_t si_serial_msg_lengths[] = {
     1,  // gy found
     3,  // gy software version
     5,  // "Hello" message
+    1,  // reset
+    1,  // invertation
+    1,  // reset orientation
     0
 };
 // clang-format on
@@ -36,7 +39,7 @@ void si_serial_init(HardwareSerial* uart,
     parser->userdata = userdata;
 
     parser->uart = uart;
-    parser->uart->begin(9600);
+    parser->uart->begin(SI_SERIAL_BAUD_RATE);
     si_serial_reset(parser);
 }
 
@@ -100,25 +103,33 @@ void si_serial_read_msg_ty(si_serial_t* serial, char dat)
 
         serial->msg_ty = (si_gy_message_types_t) dat;
         serial->state  = SI_PARSER_READ_VALUE;
-
-        digitalWrite(LED_BUILTIN, HIGH);
     }
     else
         si_serial_reset(serial);
 }
 
+void si_serial_ack(si_serial_t* serial, si_gy_values ty, const uint8_t* data)
+{
+    si_serial_write_message(serial, SI_GY_ACK, ty, data);
+}
+
+void si_serial_resp(si_serial_t* serial, si_gy_values ty, const uint8_t* data)
+{
+    si_serial_write_message(serial, SI_GY_RESP, ty, data);
+}
 
 void si_serial_call_handler(si_serial_t* serial)
 {
     switch (serial->msg_ty) {
         case SI_GY_NOTIFY:
+            si_serial_ack(serial, serial->cval, serial->buffer);
             return serial->notify(serial->userdata, serial->cval);
         case SI_GY_SET:
+            si_serial_ack(serial, serial->cval, serial->buffer);
             return serial->set(serial->userdata, serial->cval, serial->buffer);
         case SI_GY_GET:
-            si_serial_write_message(
+            si_serial_resp(
                 serial,
-                SI_GY_SET,
                 serial->cval,
                 serial->get(serial->userdata, serial->cval, serial->buffer));
             break;
@@ -132,11 +143,6 @@ void si_serial_read_value(si_serial_t* serial, char dat)
         serial->buffer[serial->scount++] = dat;
     else {
         serial->buffer[serial->scount] = dat;
-
-        if(dat == 0xCC)
-            digitalWrite(LED_BUILTIN, HIGH);
-        else
-            digitalWrite(LED_BUILTIN, LOW);
 
         si_serial_call_handler(serial);
         si_serial_reset(serial);
