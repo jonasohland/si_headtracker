@@ -3,7 +3,7 @@
 // clang-format off
 uint8_t si_serial_msg_lengths[] = { 
     0,
-    16, // Quaternion
+    16,  // Quaternion
     1,  // Samplerate
     1,  // alive
     1,  // enable
@@ -14,6 +14,7 @@ uint8_t si_serial_msg_lengths[] = {
     1,  // reset
     1,  // invertation
     1,  // reset orientation
+    8,  // interrupt/read counts
     0
 };
 // clang-format on
