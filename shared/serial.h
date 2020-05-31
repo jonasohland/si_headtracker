@@ -17,6 +17,7 @@
 #define SI_FLAG_SEND_DATA         _BV(0)
 #define SI_FLAG_RESET_ORIENTATION _BV(1)
 #define SI_FLAG_APPLY_OFFSETS     _BV(2)
+#define SI_FLAG_OUTPUT_FLOAT      _BV(3)
 
 #define SI_SERIAL_SYNC_CODE 0x23
 #define SI_SERIAL_BAUD_RATE 115200
@@ -33,7 +34,9 @@ typedef enum si_gy_parser_state {
 
 typedef enum si_gy_values {
     SI_GY_VALUES_MIN = 0,
-    SI_GY_QUATERNION,
+    SI_GY_ID,
+    SI_GY_QUATERNION_FLOAT,
+    SI_GY_QUATERNION_INT16,
     SI_GY_SRATE,
     SI_GY_ALIVE,
     SI_GY_ENABLE,
@@ -45,6 +48,7 @@ typedef enum si_gy_values {
     SI_GY_INV,
     SI_GY_RESET_ORIENTATION,
     SI_GY_INT_COUNT,
+    SI_GY_CALIBRATE,
     SI_GY_VALUES_MAX
 } si_gy_values_t;
 

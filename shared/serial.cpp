@@ -3,18 +3,21 @@
 // clang-format off
 uint8_t si_serial_msg_lengths[] = { 
     0,
-    16,  // Quaternion
-    1,  // Samplerate
-    1,  // alive
-    1,  // enable
-    1,  // gy connected
-    1,  // gy found
-    3,  // gy software version
-    5,  // "Hello" message
-    1,  // reset
-    1,  // invertation
-    1,  // reset orientation
-    8,  // interrupt/read counts
+    1,     // ID
+    16,    // Quaternion16
+    8,     // Quaternion16
+    1,     // Samplerate
+    1,     // alive
+    1,     // enable
+    1,     // gy connected
+    1,     // gy found
+    3,     // gy software version
+    5,     // "Hello" message
+    1,     // reset
+    1,     // invertation
+    1,     // reset orientation
+    8,     // interrupt/read counts
+    1,     // calibrate
     0
 };
 // clang-format on
