@@ -49,6 +49,8 @@ typedef enum si_gy_values {
     SI_GY_RESET_ORIENTATION,
     SI_GY_INT_COUNT,
     SI_GY_CALIBRATE,
+    SI_GY_INIT_BEGIN,
+    SI_GY_INIT_FINISH,
     SI_GY_VALUES_MAX
 } si_gy_values_t;
 

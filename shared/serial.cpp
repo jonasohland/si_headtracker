@@ -18,6 +18,8 @@ uint8_t si_serial_msg_lengths[] = {
     1,     // reset orientation
     8,     // interrupt/read counts
     1,     // calibrate
+    1,     // gy init begin
+    1,     // gy init finish
     0
 };
 // clang-format on
